@@ -50,6 +50,8 @@
 // module.exports = db;
 "use strict";
 
+// ✅ Force load pg at the top
+const pg = require("pg");
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
@@ -66,13 +68,15 @@ if (env === "production") {
 
   if (!databaseUrl) {
     console.error("❌ No database URL found!");
-    throw new Error("Database URL not found in environment variables");
+    throw new Error("Database URL not found");
   }
 
-  console.log("🔌 Connecting to database in production mode...");
+  console.log("🔌 Connecting to database...");
 
+  // ✅ Explicitly pass pg module
   sequelize = new Sequelize(databaseUrl, {
     dialect: "postgres",
+    dialectModule: pg, // ✅ Force use pg module
     protocol: "postgres",
     logging: false,
     native: false,
@@ -83,36 +87,32 @@ if (env === "production") {
       },
     },
     pool: {
-      max: 5,
+      max: 3,
       min: 0,
       acquire: 60000,
       idle: 10000,
     },
   });
 } else {
-  // Development environment
+  // Development
   const config = require(__dirname + "/../config/config.js")[env];
-
   sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
     dialect: config.dialect,
+    dialectModule: pg, // ✅ Development mein bhi
     logging: console.log,
   });
 }
 
-// Test connection immediately
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log(`✅ Database connected successfully in ${env} mode`);
-  } catch (err) {
-    console.error("❌ Database connection failed:");
-    console.error("Error:", err.message);
-    if (err.parent) {
-      console.error("Parent error code:", err.parent.code);
-    }
-  }
-})();
+// Test connection
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log(`✅ Database connected in ${env} mode`);
+  })
+  .catch((err) => {
+    console.error("❌ Connection failed:", err.message);
+  });
 
 // Load models
 fs.readdirSync(__dirname)
@@ -132,7 +132,6 @@ fs.readdirSync(__dirname)
     db[model.name] = model;
   });
 
-// Setup associations
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);

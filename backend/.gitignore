@@ -77,3 +77,4 @@ dump.rdb
 # Vercel
 .vercel
 vercel.json
+/lib/generated/prisma
