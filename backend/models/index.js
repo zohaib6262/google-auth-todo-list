@@ -56,38 +56,43 @@ const Sequelize = require("sequelize");
 const process = require("process");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.js")[env];
 const db = {};
 
 let sequelize;
 
-// Production environment ke liye
+// Production environment
 if (env === "production") {
   const databaseUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 
   if (!databaseUrl) {
+    console.error("❌ No database URL found!");
     throw new Error("Database URL not found in environment variables");
   }
+
+  console.log("🔌 Connecting to database in production mode...");
 
   sequelize = new Sequelize(databaseUrl, {
     dialect: "postgres",
     protocol: "postgres",
     logging: false,
+    native: false,
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false, // ✅ Self-signed certificates allow karo
+        rejectUnauthorized: false,
       },
     },
     pool: {
       max: 5,
       min: 0,
-      acquire: 60000, // ✅ Timeout increase karo
+      acquire: 60000,
       idle: 10000,
     },
   });
 } else {
   // Development environment
+  const config = require(__dirname + "/../config/config.js")[env];
+
   sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
     dialect: config.dialect,
@@ -95,20 +100,19 @@ if (env === "production") {
   });
 }
 
-// Connection test with better error handling
-sequelize
-  .authenticate()
-  .then(() => {
+// Test connection immediately
+(async () => {
+  try {
+    await sequelize.authenticate();
     console.log(`✅ Database connected successfully in ${env} mode`);
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error("❌ Database connection failed:");
-    console.error("Error name:", err.name);
-    console.error("Error message:", err.message);
+    console.error("Error:", err.message);
     if (err.parent) {
-      console.error("Parent error:", err.parent.code);
+      console.error("Parent error code:", err.parent.code);
     }
-  });
+  }
+})();
 
 // Load models
 fs.readdirSync(__dirname)
