@@ -1,15 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const cron = require("node-cron");
-const puppeteerCore = require("puppeteer-core");
-const path = require("path");
 // const GoLogin = require("gologin").GoLogin;
 const { authrouter } = require("./routes/authrouter");
 const { todorouter } = require("./routes/todorouter");
-const puppeteer = require("puppeteer");
 require("dotenv").config();
 const { checkOverdueTodos } = require("./lib/brevo.js");
-const { aiplatform } = require("googleapis/build/src/apis/aiplatform/index.js");
 const { timeout } = require("cron");
 const { time } = require("console");
 const app = express();
@@ -23,12 +19,18 @@ redis.set("mykey", "myvalue");
 // Get a key
 redis.get("mykey").then(console.log);
 const corsOptions = {
-  origin: ["http://localhost:3000", "http://localhost:5173", "*"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://google-auth-todo-list-peex.vercel.app", // Apna frontend URL
+    "*",
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 };
+app.use(cors(corsOptions));
 
-app.use(cors());
 // Schedule the cron job to run every hour
 const job = cron.schedule("0 */4 * * *", checkOverdueTodos);
 job.start();
@@ -40,6 +42,8 @@ app.use("/todos", todorouter);
 app.listen(port, () => {
   console.log(`Server Running on http://localhost:${port}`);
 });
+module.exports = app;
+
 //For this https://kaipod-learning.breezy.hr/p/45f5b5c02652-senior-product-manager/apply
 // (async () => {
 //   const { GoLogin } = await import("gologin");
