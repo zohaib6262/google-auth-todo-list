@@ -63,34 +63,33 @@ let sequelize;
 
 // Production environment
 if (env === "production") {
-  const databaseUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+  // ✅ Use POSTGRES_URL_NON_POOLING for Sequelize (it doesn't work well with pooler)
+  const databaseUrl =
+    process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
 
   if (!databaseUrl) {
     console.error("❌ No database URL found!");
     throw new Error("Database URL not found");
   }
 
-  console.log("🔌 Connecting to database...");
-  console.log("Database URL:", databaseUrl.replace(/:[^:@]+@/, ":****@")); // Mask password
+  console.log("🔌 Connecting to Supabase database...");
 
-  // ✅ Parse the URL to remove sslmode from query string
-  const url = new URL(databaseUrl);
-  url.searchParams.delete("sslmode"); // Remove sslmode parameter
-  const cleanUrl = url.toString();
-
-  sequelize = new Sequelize(cleanUrl, {
+  sequelize = new Sequelize(databaseUrl, {
     dialect: "postgres",
     dialectModule: pg,
     protocol: "postgres",
-    logging: console.log, // ✅ Keep logging to see what's happening
+    logging: false, // ✅ Turn off logging in production
     native: false,
     dialectOptions: {
-      ssl: false, // ✅ Try without SSL first
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
     pool: {
       max: 5,
       min: 0,
-      acquire: 60000,
+      acquire: 30000,
       idle: 10000,
     },
   });
@@ -112,9 +111,10 @@ sequelize
     console.log(`✅ Database connected successfully in ${env} mode`);
   })
   .catch((err) => {
-    console.error("❌ Connection failed:", err.name);
-    console.error("Error code:", err.parent?.code || err.code);
-    console.error("Full error:", JSON.stringify(err, null, 2));
+    console.error("❌ Database connection failed!");
+    console.error("Error:", err.message);
+    console.error("Code:", err.original?.code || err.code);
+    console.error("Details:", err.original?.detail || "No details");
   });
 
 // Load models
