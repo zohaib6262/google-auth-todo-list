@@ -63,22 +63,22 @@ let sequelize;
 
 // Production environment
 if (env === "production") {
-  // ✅ Construct the URL properly for Supabase pooler
+  // ✅ Direct connection use karein - NO POOLER
+  const host = "db.kiqqyquwuvdejzavfncn.supabase.co"; // Direct host
+  const database = "postgres";
   const username = "postgres.kiqqyquwuvdejzavfncn";
   const password = "bWVYHBME1rhxBDma";
-  const host = "aws-0-ap-southeast-1.pooler.supabase.com";
-  const port = 6543;
-  const database = "postgres";
+  const port = 5432; // Direct connection port (NOT 6543)
 
-  const databaseUrl = `postgres://${username}:${password}@${host}:${port}/${database}`;
+  console.log("🔌 Connecting to Supabase (Direct Connection)...");
 
-  console.log("🔌 Connecting to Supabase database...");
-
-  sequelize = new Sequelize(databaseUrl, {
+  sequelize = new Sequelize(database, username, password, {
+    host: host,
+    port: port,
     dialect: "postgres",
     dialectModule: pg,
     protocol: "postgres",
-    logging: false,
+    logging: console.log, // Debug ke liye
     native: false,
     dialectOptions: {
       ssl: {
@@ -87,7 +87,7 @@ if (env === "production") {
       },
     },
     pool: {
-      max: 5,
+      max: 3,
       min: 0,
       acquire: 30000,
       idle: 10000,
@@ -113,7 +113,7 @@ sequelize
   .catch((err) => {
     console.error("❌ Database connection failed!");
     console.error("Error:", err.message);
-    console.error("Code:", err.original?.code || err.code);
+    console.error("Parent error:", err.parent?.message);
   });
 
 // Load models
