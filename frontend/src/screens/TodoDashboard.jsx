@@ -12,12 +12,15 @@ const TodoDashboard = () => {
   const fetchTodos = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/todos/get-todos", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        "https://google-auth-todo-list.vercel.app/todos/get-todos",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const data = await response.json();
 
       if (!response.ok) {

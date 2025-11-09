@@ -19,7 +19,7 @@ const HotelForm = () => {
     setNotFound("");
     try {
       const res = await axios.get(
-        `http://localhost:3000/hotels/search?name=${name.trim()}`
+        `https://google-auth-todo-list.vercel.app/hotels/search?name=${name.trim()}`
       );
 
       if (res.data.length === 0) {

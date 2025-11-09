@@ -23,7 +23,7 @@ const AccountSettings = () => {
       setError(null);
       try {
         const response = await fetch(
-          "http://localhost:3000/auth/settings/account",
+          "https://google-auth-todo-list.vercel.app/auth/settings/account",
           {
             method: "GET",
             headers: {
@@ -70,7 +70,7 @@ const AccountSettings = () => {
       setSuccessMessage("");
       try {
         const response = await fetch(
-          "http://localhost:3000/auth/settings/account",
+          "https://google-auth-todo-list.vercel.app/auth/settings/account",
           {
             method: "PUT",
             headers: {

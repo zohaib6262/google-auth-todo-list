@@ -39,7 +39,7 @@ const Login = () => {
     setGoogleLoading(true);
     try {
       const response = await fetch(
-        `https://to-do-list-app-backend-app.vercel.app/auth/google?code=${authResult.code}`,
+        `https://google-auth-todo-list.vercel.app/auth/google?code=${authResult.code}`,
         {
           method: "GET",
           headers: {
@@ -91,7 +91,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "https://to-do-list-app-backend-app.vercel.app/auth/login",
+        "https://google-auth-todo-list.vercel.app/auth/login",
         {
           method: "POST",
           headers: {

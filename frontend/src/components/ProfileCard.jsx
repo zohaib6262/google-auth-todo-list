@@ -20,7 +20,7 @@ const ProfileCard = () => {
       setError(null);
       try {
         const response = await fetch(
-          "http://localhost:3000/auth/settings/account",
+          "https://google-auth-todo-list.vercel.app/auth/settings/account",
           {
             method: "GET",
             headers: {

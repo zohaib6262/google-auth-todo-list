@@ -30,18 +30,21 @@ const TodoForm = ({ fetchTodos }) => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/todos/create-todo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          name: todoName,
-          completed: false,
-          dueDate: dueDate,
-        }),
-      });
+      const response = await fetch(
+        "https://google-auth-todo-list.vercel.app/todos/create-todo",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            name: todoName,
+            completed: false,
+            dueDate: dueDate,
+          }),
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) {

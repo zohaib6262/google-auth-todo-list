@@ -21,7 +21,7 @@ const ForgotPassword = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/auth/forgot-password",
+        "https://google-auth-todo-list.vercel.app/auth/forgot-password",
         {
           method: "POST",
           headers: {

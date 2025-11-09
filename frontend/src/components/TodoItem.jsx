@@ -23,7 +23,7 @@ const TodoItem = ({ todo, fetchTodos }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/todos/update-todo/${todoId}`,
+        `https://google-auth-todo-list.vercel.app/todos/update-todo/${todoId}`,
         {
           method: "PUT",
           headers: {
@@ -58,7 +58,7 @@ const TodoItem = ({ todo, fetchTodos }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/todos/delete-todo/${todo.id}`,
+        `https://google-auth-todo-list.vercel.app/todos/delete-todo/${todo.id}`,
         {
           method: "DELETE",
           headers: {

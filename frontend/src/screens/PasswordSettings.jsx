@@ -27,7 +27,7 @@ const PasswordSettings = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/auth/settings/password",
+        "https://google-auth-todo-list.vercel.app/auth/settings/password",
         {
           method: "PUT",
           headers: {
