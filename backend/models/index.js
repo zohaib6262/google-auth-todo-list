@@ -73,21 +73,21 @@ if (env === "production") {
 
   console.log("🔌 Connecting to database...");
 
-  // ✅ Explicitly pass pg module
+  // ✅ Fixed SSL configuration for Supabase
   sequelize = new Sequelize(databaseUrl, {
     dialect: "postgres",
-    dialectModule: pg, // ✅ Force use pg module
+    dialectModule: pg,
     protocol: "postgres",
     logging: false,
     native: false,
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false,
+        rejectUnauthorized: false, // ✅ This allows self-signed certs
       },
     },
     pool: {
-      max: 3,
+      max: 5, // ✅ Increased from 3
       min: 0,
       acquire: 60000,
       idle: 10000,
@@ -99,7 +99,7 @@ if (env === "production") {
   sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
     dialect: config.dialect,
-    dialectModule: pg, // ✅ Development mein bhi
+    dialectModule: pg,
     logging: console.log,
   });
 }
@@ -112,6 +112,7 @@ sequelize
   })
   .catch((err) => {
     console.error("❌ Connection failed:", err.message);
+    console.error("Full error:", err); // ✅ Log full error for debugging
   });
 
 // Load models
