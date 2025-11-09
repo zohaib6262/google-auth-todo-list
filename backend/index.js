@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const { authrouter } = require("./routes/authrouter");
-const { todorouter } = require("./routes/todorouter");
+const { authrouter } = require("./routes/authrouter.js");
+const { todorouter } = require("./routes/todorouter.js");
 
 const app = express();
 const port = process.env.PORT || 3000;
