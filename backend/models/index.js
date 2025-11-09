@@ -73,21 +73,24 @@ if (env === "production") {
 
   console.log("🔌 Connecting to database...");
 
-  // ✅ Fixed SSL configuration for Supabase
+  // ✅ Most permissive SSL config for Supabase
   sequelize = new Sequelize(databaseUrl, {
     dialect: "postgres",
     dialectModule: pg,
     protocol: "postgres",
-    logging: false,
+    logging: console.log, // ✅ Enable logging temporarily to debug
     native: false,
+    ssl: true, // ✅ Add this
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false, // ✅ This allows self-signed certs
+        rejectUnauthorized: false,
+        // ✅ Bypass all cert validation
+        checkServerIdentity: () => undefined,
       },
     },
     pool: {
-      max: 5, // ✅ Increased from 3
+      max: 5,
       min: 0,
       acquire: 60000,
       idle: 10000,
