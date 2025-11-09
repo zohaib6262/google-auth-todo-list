@@ -8,20 +8,7 @@ module.exports = {
     dialect: "postgres",
   },
   production: {
-    use_env_variable: "POSTGRES_URL",
+    // Models/index.js will handle production config
     dialect: "postgres",
-    dialectModule: require("pg"), // ✅ Explicitly specify pg module
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
   },
 };
