@@ -53,22 +53,24 @@
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
+const pg = require("pg"); // ✅ Explicitly require pg
 const process = require("process");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.js")[env]; // .js instead of .json
+const config = require(__dirname + "/../config/config.js")[env];
 const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  sequelize = new Sequelize(process.env[config.use_env_variable], {
+    ...config,
+    dialectModule: pg, // ✅ Pass pg module explicitly
+  });
 } else {
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config
-  );
+  sequelize = new Sequelize(config.database, config.username, config.password, {
+    ...config,
+    dialectModule: pg, // ✅ Pass pg module explicitly
+  });
 }
 
 // Test connection

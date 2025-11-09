@@ -10,6 +10,7 @@ module.exports = {
   production: {
     use_env_variable: "POSTGRES_URL",
     dialect: "postgres",
+    dialectModule: require("pg"), // ✅ Explicitly specify pg module
     dialectOptions: {
       ssl: {
         require: true,

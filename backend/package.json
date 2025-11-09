@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "vercel-build": "echo 'Build complete'",
+    "build": "npm install --production",
+    "vercel-build": "npm install",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
