@@ -1,47 +1,48 @@
 const express = require("express");
 const cors = require("cors");
-const cron = require("node-cron");
-// const GoLogin = require("gologin").GoLogin;
+require("dotenv").config();
 const { authrouter } = require("./routes/authrouter");
 const { todorouter } = require("./routes/todorouter");
-require("dotenv").config();
-const { checkOverdueTodos } = require("./lib/brevo.js");
-const { timeout } = require("cron");
-const { time } = require("console");
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // ✅ Dynamic port
+
 app.use(express.json());
-const { redis } = require("./redis");
 
-// Set a key
-redis.set("mykey", "myvalue");
+// ❌ Redis aur Cron ko comment out karo (Vercel pe nahi chalenge)
+// const { redis } = require("./redis");
+// const cron = require("node-cron");
+// const job = cron.schedule("0 */4 * * *", checkOverdueTodos);
 
-// Get a key
-redis.get("mykey").then(console.log);
 const corsOptions = {
   origin: [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://google-auth-todo-list-peex.vercel.app", // Apna frontend URL
+    "https://google-auth-todo-list-peex.vercel.app",
     "*",
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 
-// Schedule the cron job to run every hour
-const job = cron.schedule("0 */4 * * *", checkOverdueTodos);
-job.start();
-
-// Start the server
 app.use("/auth", authrouter);
 app.use("/todos", todorouter);
 
-app.listen(port, () => {
-  console.log(`Server Running on http://localhost:${port}`);
+// Health check endpoint
+app.get("/", (req, res) => {
+  res.json({ message: "API is running" });
 });
+
+// ✅ Vercel ke liye export karo
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+}
+
 module.exports = app;
 
 //For this https://kaipod-learning.breezy.hr/p/45f5b5c02652-senior-product-manager/apply
