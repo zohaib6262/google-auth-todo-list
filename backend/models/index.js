@@ -50,7 +50,6 @@
 // module.exports = db;
 "use strict";
 
-// ✅ Force load pg at the top
 const pg = require("pg");
 const fs = require("fs");
 const path = require("path");
@@ -72,22 +71,21 @@ if (env === "production") {
   }
 
   console.log("🔌 Connecting to database...");
+  console.log("Database URL:", databaseUrl.replace(/:[^:@]+@/, ":****@")); // Mask password
 
-  // ✅ Most permissive SSL config for Supabase
-  sequelize = new Sequelize(databaseUrl, {
+  // ✅ Parse the URL to remove sslmode from query string
+  const url = new URL(databaseUrl);
+  url.searchParams.delete("sslmode"); // Remove sslmode parameter
+  const cleanUrl = url.toString();
+
+  sequelize = new Sequelize(cleanUrl, {
     dialect: "postgres",
     dialectModule: pg,
     protocol: "postgres",
-    logging: console.log, // ✅ Enable logging temporarily to debug
+    logging: console.log, // ✅ Keep logging to see what's happening
     native: false,
-    ssl: true, // ✅ Add this
     dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-        // ✅ Bypass all cert validation
-        checkServerIdentity: () => undefined,
-      },
+      ssl: false, // ✅ Try without SSL first
     },
     pool: {
       max: 5,
@@ -111,11 +109,12 @@ if (env === "production") {
 sequelize
   .authenticate()
   .then(() => {
-    console.log(`✅ Database connected in ${env} mode`);
+    console.log(`✅ Database connected successfully in ${env} mode`);
   })
   .catch((err) => {
-    console.error("❌ Connection failed:", err.message);
-    console.error("Full error:", err); // ✅ Log full error for debugging
+    console.error("❌ Connection failed:", err.name);
+    console.error("Error code:", err.parent?.code || err.code);
+    console.error("Full error:", JSON.stringify(err, null, 2));
   });
 
 // Load models
