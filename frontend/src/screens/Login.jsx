@@ -39,7 +39,7 @@ const Login = () => {
     setGoogleLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/auth/google?code=${authResult.code}`,
+        `https://to-do-list-app-backend-app.vercel.app/auth/google?code=${authResult.code}`,
         {
           method: "GET",
           headers: {
@@ -90,13 +90,16 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginForm),
-      });
+      const response = await fetch(
+        "https://to-do-list-app-backend-app.vercel.app/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginForm),
+        }
+      );
 
       const data = await response.json();
 

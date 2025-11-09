@@ -15,21 +15,38 @@ const { time } = require("console");
 const app = express();
 const port = 3000;
 app.use(express.json());
-// const corsOptions = {
-//   origin: ["http://localhost:3000", "http://localhost:5173", "*"],
-//   methods: ["GET", "POST", "PUT", "DELETE"],
-//   allowedHeaders: ["Content-Type"],
-// };
+const { redis } = require("./redis");
+
+// Set a key
+redis.set("mykey", "myvalue");
+
+// Get a key
+redis.get("mykey").then(console.log);
+const corsOptions = {
+  origin: ["http://localhost:3000", "http://localhost:5173", "*"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+};
 
 app.use(cors());
+// Schedule the cron job to run every hour
+const job = cron.schedule("0 */4 * * *", checkOverdueTodos);
+job.start();
 
+// Start the server
+app.use("/auth", authrouter);
+app.use("/todos", todorouter);
+
+app.listen(port, () => {
+  console.log(`Server Running on http://localhost:${port}`);
+});
 //For this https://kaipod-learning.breezy.hr/p/45f5b5c02652-senior-product-manager/apply
 // (async () => {
 //   const { GoLogin } = await import("gologin");
 //   const GL = new GoLogin({
 //     token:
-//       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODBmMWRiMzdlYTkwOGU4YzgyYjBiOGEiLCJ0eXBlIjoiZGV2Iiwiand0aWQiOiI2ODBmMjFkNjNjNGVkZjNiYzlmM2JjMWQifQ.U4LDVmG2-6gkNX0CNNk96Py-tKRmLY08M1If7T8zVLI",
-//     profile_id: "680f2e37ccb8726c5421dd33",
+//       "",
+//     profile_id: "",
 //   });
 
 //   const { wsUrl } = await GL.start();
@@ -113,9 +130,9 @@ app.use(cors());
 //   const { GoLogin } = await import("gologin");
 //   const GL = new GoLogin({
 //     token:
-//       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODBmMWRiMzdlYTkwOGU4YzgyYjBiOGEiLCJ0eXBlIjoiZGV2Iiwiand0aWQiOiI2ODBmMjFkNjNjNGVkZjNiYzlmM2JjMWQifQ.U4LDVmG2-6gkNX0CNNk96Py-tKRmLY08M1If7T8zVLI",
-//     profile_id: "68015f92c0f309452f1c4dae",
-//     profile_id: "680f2e37ccb8726c5421dd33",
+//       "",
+//     profile_id: "",
+//     profile_id: "",
 //   });
 
 //   const { wsUrl } = await GL.start();
@@ -319,16 +336,4 @@ app.use(cors());
 //   await browser.close();
 //   await GL.stop();
 // })();
-app.use("/hotels", todorouter);
-app.use("/auth", authrouter);
-app.use("/todos", todorouter);
-
-// Schedule the cron job to run every minute
-// const job = cron.schedule("*/1 * * * *", checkOverdueTodos); // Use the imported function
-// job.start();
-
-// Start the server
-
-app.listen(port, () => {
-  console.log(`Server Running on http://localhost:${port}`);
-});
+// app.use("/hotels", todorouter);

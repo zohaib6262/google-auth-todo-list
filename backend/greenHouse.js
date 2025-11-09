@@ -1,9 +1,8 @@
 (async () => {
   const { GoLogin } = await import("gologin");
   const GL = new GoLogin({
-    token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODBmMWRiMzdlYTkwOGU4YzgyYjBiOGEiLCJ0eXBlIjoiZGV2Iiwiand0aWQiOiI2ODBmMjFkNjNjNGVkZjNiYzlmM2JjMWQifQ.U4LDVmG2-6gkNX0CNNk96Py-tKRmLY08M1If7T8zVLI",
-    profile_id: "680f2e37ccb8726c5421dd33",
+    token: "",
+    profile_id: "",
   });
 
   const { wsUrl } = await GL.start();

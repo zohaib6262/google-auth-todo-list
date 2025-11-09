@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express();
+// const { authenticate } = require("../middleware/authMiddleware");
 const { authenticate } = require("../middleware/authMiddleware");
 const TodoController = require("../controllers/todoController");
 

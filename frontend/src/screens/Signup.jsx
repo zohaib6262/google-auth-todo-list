@@ -53,7 +53,7 @@ const Signup = () => {
     setGoogleLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/auth/google?code=${authResult.code}`,
+        `https://to-do-list-app-backend-app.vercel.app/auth/google?code=${authResult.code}`,
         {
           method: "GET",
           headers: {
@@ -135,13 +135,16 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signUpForm),
-      });
+      const response = await fetch(
+        "https://to-do-list-app-backend-app.vercel.app/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(signUpForm),
+        }
+      );
       const data = await response.json();
 
       if (!response.ok) {
