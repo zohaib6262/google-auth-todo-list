@@ -5,14 +5,15 @@ const { authrouter } = require("./routes/authrouter");
 const { todorouter } = require("./routes/todorouter");
 
 const app = express();
-const port = process.env.PORT || 3000; // ✅ Dynamic port
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// ❌ Redis aur Cron ko comment out karo (Vercel pe nahi chalenge)
-// const { redis } = require("./redis");
+// ❌ Cron job comment out karo (Vercel cron use karenge)
 // const cron = require("node-cron");
+// const { checkOverdueTodos } = require("./lib/brevo.js");
 // const job = cron.schedule("0 */4 * * *", checkOverdueTodos);
+// job.start();
 
 const corsOptions = {
   origin: [
@@ -33,10 +34,13 @@ app.use("/todos", todorouter);
 
 // Health check endpoint
 app.get("/", (req, res) => {
-  res.json({ message: "API is running" });
+  res.json({
+    message: "API is running",
+    timestamp: new Date().toISOString(),
+  });
 });
 
-// ✅ Vercel ke liye export karo
+// Vercel ke liye export
 if (process.env.NODE_ENV !== "production") {
   app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
