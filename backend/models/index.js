@@ -63,14 +63,14 @@ let sequelize;
 
 // Production environment
 if (env === "production") {
-  // ✅ Use POSTGRES_URL_NON_POOLING for Sequelize (it doesn't work well with pooler)
-  const databaseUrl =
-    process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+  // ✅ Construct the URL properly for Supabase pooler
+  const username = "postgres.kiqqyquwuvdejzavfncn";
+  const password = "bWVYHBME1rhxBDma";
+  const host = "aws-0-ap-southeast-1.pooler.supabase.com";
+  const port = 6543;
+  const database = "postgres";
 
-  if (!databaseUrl) {
-    console.error("❌ No database URL found!");
-    throw new Error("Database URL not found");
-  }
+  const databaseUrl = `postgres://${username}:${password}@${host}:${port}/${database}`;
 
   console.log("🔌 Connecting to Supabase database...");
 
@@ -78,7 +78,7 @@ if (env === "production") {
     dialect: "postgres",
     dialectModule: pg,
     protocol: "postgres",
-    logging: false, // ✅ Turn off logging in production
+    logging: false,
     native: false,
     dialectOptions: {
       ssl: {
@@ -114,7 +114,6 @@ sequelize
     console.error("❌ Database connection failed!");
     console.error("Error:", err.message);
     console.error("Code:", err.original?.code || err.code);
-    console.error("Details:", err.original?.detail || "No details");
   });
 
 // Load models
